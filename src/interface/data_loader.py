@@ -5,7 +5,7 @@ from langchain.schema import Document
 class DataLoader(ABC):
     
     @abstractmethod
-    def load_html(self, path: str) -> None:
+    def load(self, path: str) -> None:
         pass
     
     @abstractmethod

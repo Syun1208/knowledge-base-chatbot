@@ -17,53 +17,72 @@ from src.service.naive_rag import NaiveRAG
 
 class ApplicationContainer(containers.DeclarativeContainer):
     # set up to get config
+    wiring_config = containers.WiringConfiguration(modules=["src.controller.endpoint"])
+    
     config = providers.Configuration()
     actor_system = providers.Singleton(ActorSystem)
     
     logger = providers.Singleton(
-        Logger,
-        log_dir=config.logger.log_dir,
-        log_clear_days=config.logger.log_clear_days
+        providers.Singleton(
+            Logger,
+            log_dir=config.logger.log_dir,
+            log_clear_days=config.logger.log_clear_days
+        )
+
     )
     
     halong_embedding = providers.AbstractSingleton(LLM)
     halong_embedding.override(
-        HaLongEmbedding,
-        model_id=config.huggingface.model_embedding
+        providers.Singleton(
+            HaLongEmbedding,
+            model_id=config.huggingface.model_embedding
+        )
+
     )
     
     html_loader = providers.AbstractSingleton(DataLoader)
     html_loader.override(
-        HTMLLoader
+        providers.Singleton(
+            HTMLLoader            
+        )
+
     )
     
     llama2 = providers.AbstractSingleton(LLM)
     llama2.override(
-        Ollama
+        providers.Singleton(
+            Ollama
+        )
     )
     
     faiss_db = providers.AbstractSingleton(VectorDatabase)
     faiss_db.override(
-        FaissDB,
-        model_embedding=halong_embedding,
-        model_dim=config.hugging_face.model_dim,
-        document_loader=html_loader,
-        logger=logger,
-        path_loads=config.knowledge_base.url,
-        path_save_documents=config.knowledge_base.path_save_documents,
-        path_save_db=config.vector_db.path_save_db,
-        chunk_size=config.knowledge_base.chunk_size,
-        chunk_overlap=config.knowledge_base.chunk_overlap,
-        show_time_compute=config.timer.show_time_compute
+        providers.Singleton(
+            FaissDB,
+            model_embedding=halong_embedding,
+            model_dim=config.huggingface.model_dim,
+            document_loader=html_loader,
+            logger=logger,
+            path_loads=config.knowledge_base.url,
+            path_save_documents=config.knowledge_base.path_save_documents,
+            path_save_db=config.vector_db.path_save_db,
+            chunk_size=config.knowledge_base.chunk_size,
+            chunk_overlap=config.knowledge_base.chunk_overlap,
+            top_k=config.vector_db.top_k,
+            show_time_compute=config.timer.show_time_compute
+        )
+
     )
     
-    prompter = providers.Singleton(PromptTemplate)
+    # prompter = providers.Singleton(PromptTemplate)
     
-    naive_rag = providers.AbstractSingleton(RAG)
-    naive_rag.override(
-        NaiveRAG,
-        llm=llama2,
-        vector_db=faiss_db,
-        prompter=prompter,
-        template=config.prompter.template
-    )
+    # naive_rag = providers.AbstractSingleton(RAG)
+    # naive_rag.override(
+    #     providers.Singleton(
+    #         NaiveRAG,
+    #         llm=llama2,
+    #         vector_db=faiss_db,
+    #         prompter=prompter,
+    #         template=config.prompter.template
+    #     )
+    # )

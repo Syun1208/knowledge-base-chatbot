@@ -68,11 +68,13 @@ class FaissDB(VectorDatabase):
         # load documents and chunking
         documents = []
         for path_load in self.path_loads:
-            self.document_loader.load_html(path_load)
+            self.document_loader.load(path_load)
             self.documents = self.document_loader.chunk(chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
             self.documents = [document.page_content for document in self.documents]
             documents.extend(self.documents)
         self.documents = documents
+        documents = []
+
         
         # Save documents
         self.write_json(path=self.path_save_documents)
@@ -80,7 +82,7 @@ class FaissDB(VectorDatabase):
         
         # Encode documents
         self.model_embedding.encode(self.documents)
-        for i, embedding in tqdm.tqdm(self.model_embedding.get_embedding(), colour='green', desc='Indexing'):
+        for embedding in tqdm.tqdm(self.model_embedding.get_embedding(), colour='green', desc='Indexing'):
             embedding = embedding.astype(np.float32).reshape(1, -1)
             self.cpu_index.add(embedding)
         
@@ -108,11 +110,11 @@ class FaissDB(VectorDatabase):
                 indices=None
             )
         
-        self.model_embedding.encode(query)
+        self.model_embedding.encode([query])
         prompt_embedding = self.model_embedding.get_embedding()
         prompt_embedding = np.array(prompt_embedding)
         scores, indices = self.cpu_index.search(prompt_embedding, k=self.top_k)
-        contexts = [self.documents[i] for i in indices]
+        contexts = [self.documents[i] for i in indices.flatten().tolist()]
         
         return SearchingInfo(
             scores=scores,

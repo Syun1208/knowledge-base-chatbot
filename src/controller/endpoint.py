@@ -1,6 +1,6 @@
 import os
 import logging
-
+import traceback
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from dependency_injector.wiring import Provide, inject
@@ -11,8 +11,8 @@ from src.controller.endpoint_filter import EndpointFilter
 from src.service.faiss_db import FaissDB
 from src.module.application_container import ApplicationContainer
 
-uvicorn_logger = logging.getLogger("uvicorn.access")
-uvicorn_logger.addFilter(EndpointFilter(path="/"))
+# uvicorn_logger = logging.getLogger("uvicorn.access")
+# uvicorn_logger.addFilter(EndpointFilter(path="/"))
 
 
 router = APIRouter()
@@ -29,6 +29,7 @@ async def health_check() -> JSONResponse:
 
 
 @router.get('/indexing')
+@inject
 async def indexing(
     faiss_db: FaissDB = Depends(Provide[ApplicationContainer.faiss_db])
 ) -> JSONResponse:
@@ -45,15 +46,21 @@ async def indexing(
         
     except Exception as e:
         # If any exception occurs, raise an HTTP 500 Internal Server Error
+        print(e)
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
    
   
    
 @router.get('/searching')
-async def chat(
+@inject
+async def searching(
     request: Request, 
     faiss_db: FaissDB = Depends(Provide[ApplicationContainer.faiss_db])
 ) -> JSONResponse:
+    
+    faiss_db.load_bin()
+    faiss_db.load_json()
     
     try:
         info = await request.json()
@@ -68,5 +75,7 @@ async def chat(
         
     except Exception as e:
         # If any exception occurs, raise an HTTP 500 Internal Server Error
+        print(e)
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
     

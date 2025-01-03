@@ -15,3 +15,4 @@ thespian==3.10.5
 fastapi
 uvicorn[standard]
 pydantic
+pyyaml

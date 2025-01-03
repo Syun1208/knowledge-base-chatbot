@@ -1,26 +1,34 @@
-hugging_face:
+server:
+  http:
+    host: "0.0.0.0"
+    nthreads: 4
+    port: 5000
+
+default:
+  app_name: "KNOWLEDGE-BASED CHATBOT"
+  env: "LOCAL"
+  available_num_processes: 4
+
+huggingface:
   token: "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"
   model_embedding: "hiieu/halong_embedding"
   model_dim: 768
-  
+
 vector_db:
-  path_save_db: ./data/vector_db.bin
+  path_save_db: "./data/vector_db.bin"
+  top_k: 2
 
 knowledge_base:
   url:
     - "https://nexcel.info/employee-handbook-2/"
     - "https://nexcel.info/nexcel-career-development-handbook/"
-
-  path_save_documents: ./data/documents.json
-  chunk_size: 500
+  path_save_documents: "./data/documents.json"
+  chunk_size: 1000
   chunk_overlap: 20
-
-prompter: 
-  template: "Dựa trên các gợi ý sau:\n{context}\n\n\nBạn hãy trả lời câu hỏi sau đây thật chính xác dựa trên các gợi ý đã cho:\n{query}"
 
 logger:
   log_dir: "logs/"
   log_clear_days: 20
 
 timer:
-    show_time_compute: False
+  show_time_compute: false
