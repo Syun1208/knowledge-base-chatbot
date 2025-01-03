@@ -1,0 +1,26 @@
+hugging_face:
+  token: "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"
+  model_embedding: "hiieu/halong_embedding"
+  model_dim: 768
+  
+vector_db:
+  path_save_db: ./data/vector_db.bin
+
+knowledge_base:
+  url:
+    - "https://nexcel.info/employee-handbook-2/"
+    - "https://nexcel.info/nexcel-career-development-handbook/"
+
+  path_save_documents: ./data/documents.json
+  chunk_size: 500
+  chunk_overlap: 20
+
+prompter: 
+  template: "Dựa trên các gợi ý sau:\n{context}\n\n\nBạn hãy trả lời câu hỏi sau đây thật chính xác dựa trên các gợi ý đã cho:\n{query}"
+
+logger:
+  log_dir: "logs/"
+  log_clear_days: 20
+
+timer:
+    show_time_compute: False
