@@ -11,7 +11,9 @@ from src.interface.vector_database import VectorDatabase
 from src.interface.model_embedding import ModelEmbedding
 from src.interface.data_loader import DataLoader
 from src.model.searching_info import SearchingInfo
+from src.interface.web_crawler import WebCrawler
 from src.utils.logger import Logger
+from src.interface.chunking import Chunking
 
 class FaissDB(VectorDatabase):
     
@@ -20,12 +22,12 @@ class FaissDB(VectorDatabase):
         model_embedding: ModelEmbedding,
         model_dim: int,
         document_loader: DataLoader,
+        web_crawler: WebCrawler,
+        chunking: Chunking,
         logger: Logger,
         path_loads: List[str],
         path_save_documents: str,
         path_save_db: str,
-        chunk_size: int,
-        chunk_overlap: int,
         top_k: int,
         show_time_compute: bool = False
     ) -> None:
@@ -34,6 +36,8 @@ class FaissDB(VectorDatabase):
         self.model_embedding = model_embedding
         self.model_dim = model_dim
         self.document_loader = document_loader
+        self.web_crawler = web_crawler
+        self.chunking = chunking
         self.cpu_index = None
         self.logger = logger.get_tracking(__name__)
         self.show_time_compute = show_time_compute
@@ -42,8 +46,6 @@ class FaissDB(VectorDatabase):
         self.path_loads = path_loads
         self.path_save_documents = path_save_documents
         self.path_save_db = path_save_db
-        self.chunk_size = chunk_size
-        self.chunk_overlap = chunk_overlap
         self.top_k = top_k
        
     def write_json(self, path: str):
@@ -61,20 +63,19 @@ class FaissDB(VectorDatabase):
  
     
     def indexing(
-        self
+        self,
+        query: str = None
     ) -> None:
         self.cpu_index = faiss.IndexFlatIP(self.model_dim)
         
         # load documents and chunking
-        documents = []
-        for path_load in self.path_loads:
-            self.document_loader.load(path_load)
-            self.documents = self.document_loader.chunk(chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
-            self.documents = [document.page_content for document in self.documents]
-            documents.extend(self.documents)
-        self.documents = documents
-        documents = []
-
+        if query is not None:
+            self.documents = self.document_loader.load(self.path_loads)
+            
+        else:
+            self.documents = self.web_crawler.crawl(query=query)
+        
+        self.documents = self.chunking.chunk(self.documents)
         
         # Save documents
         self.write_json(path=self.path_save_documents)
@@ -117,8 +118,8 @@ class FaissDB(VectorDatabase):
         contexts = [self.documents[i] for i in indices.flatten().tolist()]
         
         return SearchingInfo(
-            scores=scores,
+            scores=scores.flatten().tolist(),
             contexts=contexts,
-            indices=indices
+            indices=indices.flatten().tolist()
         )
         

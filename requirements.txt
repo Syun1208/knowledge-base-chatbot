@@ -16,3 +16,8 @@ fastapi
 uvicorn[standard]
 pydantic
 pyyaml
+googlesearch-python 
+requests 
+beautifulsoup4 
+markdownify
+Markdown

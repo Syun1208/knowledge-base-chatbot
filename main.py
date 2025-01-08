@@ -2,6 +2,8 @@ import os
 import sys
 import uvicorn
 import warnings
+warnings.filterwarnings('ignore')
+
 import logging
 from multiprocessing import Pool
 
@@ -48,16 +50,16 @@ def create_app(env: str) -> FastAPI:
     logging.info("Wire completed")
     logging.basicConfig(level=logging.INFO)
 
-    return app
+    return app, config
 
 
-app = create_app(env=os.environ['APP_MODE'])
+app, config = create_app(env=os.environ['APP_MODE'])
 
 if __name__ == "__main__":    
     uvicorn.run(
         app='main:app', 
-        host='0.0.0.0', 
-        port=5000, 
+        host=config['server']['http']['host'], 
+        port=int(config['server']['http']['port']), 
         reload=True, 
         workers=psutil.cpu_count(logical=False), 
         timeout_keep_alive=60 * 60 * 2

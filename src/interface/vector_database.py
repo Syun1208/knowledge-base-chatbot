@@ -14,13 +14,13 @@ class VectorDatabase(ABC):
         pass
     
     @abstractmethod
-    def searching(self, prompt: str) -> SearchingInfo:
+    def searching(self, query: str) -> SearchingInfo:
         pass
     
     @abstractmethod
-    def load_bin(self, bin_path: str) -> None:
+    def load_bin(self) -> None:
         pass
     
     @abstractmethod
-    def indexing(self, path_save: str) -> None:
+    def indexing(self, query: str = None) -> None:
         pass

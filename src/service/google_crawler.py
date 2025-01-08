@@ -1,29 +1,31 @@
-import requests
+from googlesearch import search, SearchResult
 from typing import List
+import requests
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 
-from src.interface.data_loader import DataLoader
+from src.interface.web_crawler import WebCrawler
 from src.model.web_search_info import WebSearchInfo
 from src.utils.utils import convert_html2markdown
 
 
-class HTMLLoader(DataLoader):
+class GoogleCrawler(WebCrawler):
     
     def __init__(
         self,
         markdown_splitter: MarkdownHeaderTextSplitter
     ) -> None:
-        super(HTMLLoader, self).__init__()
+        super(GoogleCrawler, self).__init__()
         self.markdown_splitter = markdown_splitter
     
-    
-    
-    def load(self, paths: List[str]) -> List[WebSearchInfo]:
-
+        
+        
+    def crawl(self, query: str) -> List[WebSearchInfo]:
+        search_results = list(search(query, num_results=6, advanced=True))
+        
         info = []
-        for path in paths:
+        for search_result in search_results:
             
-            response = requests.get(path)
+            response = requests.get(search_result.url)
             
             if response.status_code == 200:
                 html_content = response.text
@@ -31,10 +33,10 @@ class HTMLLoader(DataLoader):
                 info.append(
                     WebSearchInfo(
                         page_content=markdown_content,
-                        url=path
+                        url=search_result.url
                     )
                 )
-                
+            
             else:
                 raise ValueError(f"Failed to fetch the URL: {response.status_code}")
         

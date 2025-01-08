@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from src.controller.endpoint_filter import EndpointFilter
 from src.service.faiss_db import FaissDB
+from src.utils.utils import get_confident_context
 from src.module.application_container import ApplicationContainer
 
 # uvicorn_logger = logging.getLogger("uvicorn.access")
@@ -52,7 +53,7 @@ async def indexing(
    
   
    
-@router.get('/searching')
+@router.post('/searching')
 @inject
 async def searching(
     request: Request, 
@@ -65,6 +66,11 @@ async def searching(
     try:
         info = await request.json()
         searching_info = faiss_db.searching(query=info['query'])
+        
+        searching_info = get_confident_context(
+            searching_info=searching_info, 
+            threshold=0.9
+        )
         
         return JSONResponse(
             content=jsonable_encoder({

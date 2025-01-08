@@ -1,13 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Any
 from langchain.schema import Document
 
 class DataLoader(ABC):
     
     @abstractmethod
-    def load(self, path: str) -> None:
-        pass
-    
-    @abstractmethod
-    def chunk(self, chunk_size: int, chunk_overlap: int) -> List[Document]:
+    def load(self, path: List[str]) -> List[Any]:
         pass
