@@ -88,7 +88,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
             model_dim=config.huggingface.model_dim,
             document_loader=html_loader,
             web_crawler=google_crawler,
-            markdown_chunking=markdown_chunking,
+            chunking=markdown_chunking,
             logger=logger,
             path_loads=config.knowledge_base.url,
             path_save_documents=config.knowledge_base.path_save_documents,

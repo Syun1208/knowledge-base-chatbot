@@ -10,7 +10,7 @@ nest-asyncio # just for async in notebook
 langchain
 beautifulsoup4 
 requests
-dependency-injector==4.41.0
+dependency-injector
 thespian==3.10.5
 fastapi
 uvicorn[standard]
@@ -21,3 +21,5 @@ requests
 beautifulsoup4 
 markdownify
 Markdown
+torch
+sentence-transformers

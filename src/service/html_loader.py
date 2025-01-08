@@ -3,7 +3,7 @@ from typing import List
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 from src.interface.data_loader import DataLoader
-from src.model.web_search_info import WebSearchInfo
+from src.model.knowledge_info import KnowledgeInfo
 from src.utils.utils import convert_html2markdown
 
 
@@ -18,7 +18,7 @@ class HTMLLoader(DataLoader):
     
     
     
-    def load(self, paths: List[str]) -> List[WebSearchInfo]:
+    def load(self, paths: List[str]) -> List[KnowledgeInfo]:
 
         info = []
         for path in paths:
@@ -29,7 +29,7 @@ class HTMLLoader(DataLoader):
                 html_content = response.text
                 markdown_content = convert_html2markdown(html_content)
                 info.append(
-                    WebSearchInfo(
+                    KnowledgeInfo(
                         page_content=markdown_content,
                         url=path
                     )

@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Dict
 
-from src.model.web_search_info import WebSearchInfo
+from src.model.knowledge_info import KnowledgeInfo
 
 
 class Chunking(ABC):
     
     @abstractmethod
-    def chunk(self, infomations: List[WebSearchInfo]) -> List[WebSearchInfo]:
+    def chunk(self, infomations: List[KnowledgeInfo]) -> List[Dict[str, str]]:
         pass

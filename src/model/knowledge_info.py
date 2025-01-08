@@ -1,7 +1,7 @@
 import dataclasses
 
 @dataclasses.dataclass
-class WebSearchInfo:
+class KnowledgeInfo:
     url: str
     page_content: str
     

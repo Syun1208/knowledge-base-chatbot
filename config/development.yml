@@ -2,7 +2,7 @@ server:
   http:
     host: "0.0.0.0"
     nthreads: 4
-    port: 5000
+    port: 8000
 
 default:
   app_name: "KNOWLEDGE BASE CHATBOT"
@@ -20,8 +20,9 @@ vector_db:
 
 knowledge_base:
   url:
-    - "https://nexcel.info/employee-handbook-2/"
-    - "https://nexcel.info/nexcel-career-development-handbook/"
+    # - "https://nexcel.info/employee-handbook-2/"
+    # - "https://nexcel.info/nexcel-career-development-handbook/"
+    - "https://pypi.org/project/sentence-transformers/"
   path_save_documents: "./data/documents.json"
   chunk_size: 1000
   chunk_overlap: 20

@@ -1,11 +1,9 @@
 import os
-import sys
 import uvicorn
 import warnings
 warnings.filterwarnings('ignore')
 
 import logging
-from multiprocessing import Pool
 
 import psutil
 from fastapi import FastAPI

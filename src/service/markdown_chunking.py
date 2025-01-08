@@ -1,9 +1,10 @@
 from langchain_text_splitters import MarkdownHeaderTextSplitter
-from typing import List
+from typing import List, Dict
 from markdown import markdown
 from bs4 import BeautifulSoup
+import re
 
-from src.model.web_search_info import WebSearchInfo
+from src.model.knowledge_info import KnowledgeInfo
 from src.interface.chunking import Chunking
 
 
@@ -25,7 +26,7 @@ class MarkdownChunking(Chunking):
         ) 
         
         
-    def chunk(self, infomations: List[WebSearchInfo]) -> List[WebSearchInfo]:
+    def chunk(self, infomations: List[KnowledgeInfo]) -> List[Dict[str, str]]:
         
         chunks = []
         for info in infomations:
@@ -35,11 +36,11 @@ class MarkdownChunking(Chunking):
             for md_header_split in md_header_splits:
                 html = markdown(md_header_split.page_content)
                 page_content = ''.join(BeautifulSoup(html).findAll(text=True))
-                chunks.append(
-                    WebSearchInfo(
-                        url=info.url, 
-                        page_content=page_content
-                    )
-                )
-                
+                page_content = re.sub(r'\| --- \| --- \| --- \|', '', page_content)
+                page_content = re.sub(r'\n+', '\n', page_content).strip()
+                chunks.append({
+                    'url': info.url,
+                    'content': page_content
+                })
+               
         return chunks

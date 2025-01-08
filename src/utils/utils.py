@@ -32,6 +32,7 @@ def get_confident_context(
 ) -> SearchingInfo:
     
     contexts = np.array(searching_info.contexts)
+    urls = np.array(searching_info.urls)
     scores = np.array(searching_info.scores)
     indices = np.array(searching_info.indices)
 
@@ -42,16 +43,19 @@ def get_confident_context(
         return SearchingInfo(
             scores=[],
             contexts=[],
+            urls=[],
             indices=[]
         )
     
     confident_indices = indices[confident_index].tolist()
     confident_contexts = contexts[confident_index].tolist()
+    confident_urls = urls[confident_index].tolist()
     confident_scores = scores[confident_index].tolist()
     
     return SearchingInfo(
         scores=confident_scores,
         contexts=confident_contexts,
+        urls=confident_urls,
         indices=confident_indices
     )
     

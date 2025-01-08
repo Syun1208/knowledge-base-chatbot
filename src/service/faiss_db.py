@@ -10,6 +10,7 @@ from typing import Any, Dict, List
 from src.interface.vector_database import VectorDatabase
 from src.interface.model_embedding import ModelEmbedding
 from src.interface.data_loader import DataLoader
+from src.model.knowledge_info import KnowledgeInfo
 from src.model.searching_info import SearchingInfo
 from src.interface.web_crawler import WebCrawler
 from src.utils.logger import Logger
@@ -38,64 +39,65 @@ class FaissDB(VectorDatabase):
         self.document_loader = document_loader
         self.web_crawler = web_crawler
         self.chunking = chunking
-        self.cpu_index = None
         self.logger = logger.get_tracking(__name__)
         self.show_time_compute = show_time_compute
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.documents = None
         self.path_loads = path_loads
         self.path_save_documents = path_save_documents
         self.path_save_db = path_save_db
         self.top_k = top_k
        
-    def write_json(self, path: str):
+       
+    @staticmethod
+    def write_json(documents, path: str):
         with open(path, 'w') as json_file:
-            json.dump(self.documents, json_file)
-          
+            json.dump(documents, json_file)
+           
             
     def load_json(self) -> Dict[str, Any]:
         with open(self.path_save_documents, 'r') as json_file:
-            self.documents = json.load(json_file)
+            documents = json.load(json_file)
+        return documents
     
     
-    def load_bin(self) -> None:
-        self.cpu_index = faiss.read_index(self.path_save_db) 
+    def load_bin(self) -> faiss.IndexFlatIP:
+        cpu_index = faiss.read_index(self.path_save_db) 
+        return cpu_index
  
     
     def indexing(
         self,
-        query: str = None
+        cpu_index: faiss.IndexFlatIP,
+        documents: List[KnowledgeInfo]
     ) -> None:
-        self.cpu_index = faiss.IndexFlatIP(self.model_dim)
         
-        # load documents and chunking
-        if query is not None:
-            self.documents = self.document_loader.load(self.path_loads)
-            
-        else:
-            self.documents = self.web_crawler.crawl(query=query)
-        
-        self.documents = self.chunking.chunk(self.documents)
+        # Chunking
+        chunked_documents = self.chunking.chunk(documents)
         
         # Save documents
-        self.write_json(path=self.path_save_documents)
+        self.write_json(documents=chunked_documents, path=self.path_save_documents)
         self.logger.info(f"Saved documents successfully at: {self.path_save_documents}")
         
         # Encode documents
-        self.model_embedding.encode(self.documents)
+        self.model_embedding.encode(chunked_documents)
         for embedding in tqdm.tqdm(self.model_embedding.get_embedding(), colour='green', desc='Indexing'):
             embedding = embedding.astype(np.float32).reshape(1, -1)
-            self.cpu_index.add(embedding)
+            cpu_index.add(embedding)
         
         # Save vector database
-        faiss.write_index(self.cpu_index, self.path_save_db)
+        faiss.write_index(cpu_index, self.path_save_db)
         self.logger.info(f"Saved vector db successfully at: {self.path_save_db}")
     
     
     
-    def searching(self, query: str) -> SearchingInfo:
+    def searching(
+        self, 
+        cpu_index: faiss.IndexFlatIP,
+        documents: List[KnowledgeInfo],
+        query: str
+    ) -> SearchingInfo:
         
-        if self.cpu_index is None:
+        if cpu_index is None:
             AssertionError("Could not find vector database, please index it before searching !")
             return SearchingInfo(
                 scores=None,
@@ -103,7 +105,7 @@ class FaissDB(VectorDatabase):
                 indices=None
             )
         
-        if self.documents is None:
+        if documents is None:
             AssertionError("Please load your local documents before searching !")
             return SearchingInfo(
                 scores=None,
@@ -114,11 +116,13 @@ class FaissDB(VectorDatabase):
         self.model_embedding.encode([query])
         prompt_embedding = self.model_embedding.get_embedding()
         prompt_embedding = np.array(prompt_embedding)
-        scores, indices = self.cpu_index.search(prompt_embedding, k=self.top_k)
-        contexts = [self.documents[i] for i in indices.flatten().tolist()]
+        scores, indices = cpu_index.search(prompt_embedding, k=self.top_k)
+        urls = [documents[i]['url'] for i in indices.flatten().tolist()]
+        contexts = [documents[i]['content'] for i in indices.flatten().tolist()]
         
         return SearchingInfo(
             scores=scores.flatten().tolist(),
+            urls=urls,
             contexts=contexts,
             indices=indices.flatten().tolist()
         )
