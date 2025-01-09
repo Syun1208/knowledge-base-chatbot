@@ -119,12 +119,12 @@ async def searching(
             documents=documents,
             query=info['query']
         )
-        
-        searching_info = get_confident_context(
-            searching_info=searching_info, 
-            threshold=0.9
-        )
-        
+        print(searching_info)
+        # searching_info = get_confident_context(
+        #     searching_info=searching_info, 
+        #     threshold=0.7
+        # )
+
         return JSONResponse(
             content=jsonable_encoder({
                 'urls': searching_info.urls,

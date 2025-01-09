@@ -77,9 +77,10 @@ class FaissDB(VectorDatabase):
         # Save documents
         self.write_json(documents=chunked_documents, path=self.path_save_documents)
         self.logger.info(f"Saved documents successfully at: {self.path_save_documents}")
-        
+
         # Encode documents
-        self.model_embedding.encode(chunked_documents)
+        content_documents = [chunked_document['content'] for chunked_document in chunked_documents]
+        self.model_embedding.encode(content_documents)
         for embedding in tqdm.tqdm(self.model_embedding.get_embedding(), colour='green', desc='Indexing'):
             embedding = embedding.astype(np.float32).reshape(1, -1)
             cpu_index.add(embedding)
