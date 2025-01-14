@@ -5,3 +5,5 @@ data/documents.json
 **/*.bin
 **/*logs/
 .venv
+**/*notebook/*.md
+**/*notebook/*.txt
