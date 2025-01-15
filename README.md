@@ -1,3 +1,83 @@
+# Tree Folder 
+
+```bash
+D:.
+│   .dockerignore
+│   .gitignore
+│   .gitlab-ci.yml
+│   crawl4ai_setup.sh
+│   Dockerfile
+│   main.py
+│   README.md
+│   requirements.txt
+│   run.sh
+│
+├───config
+│       development.yml
+│       production.yml
+│
+├───data
+│       documents.json
+│       vector_db.bin
+│
+├───image
+│       indexing.png
+│       postman_searching.png
+│       searching.png
+│
+├───logs
+│       2025-01-06.log
+│       2025-01-07.log
+│       2025-01-09.log
+│       2025-01-15.log
+│
+└───src
+    ├───controller
+    │       endpoint.py
+    │       endpoint_filter.py
+    │
+    ├───model
+    │       knowledge_info.py
+    │       searching_info.py
+    │
+    ├───module
+    │       application_container.py
+    │
+    ├───notebook
+    │       chunking.ipynb
+    │       employee_handbook.md
+    │       employee_handbook.txt
+    │
+    ├───service
+    │   ├───implement
+    │   │       faiss_db.py
+    │   │       google_crawler.py
+    │   │       halong_embedding.py
+    │   │       html_loader.py
+    │   │       llama.py
+    │   │       markdown_chunking.py
+    │   │       naive_rag.py
+    │   │       ollama.py
+    │   │       vi_mistral.py
+    │   │       web_crawler.py
+    │   │
+    │   └───interface
+    │           chunking.py
+    │           data_loader.py
+    │           llm.py
+    │           model_embedding.py
+    │           rag.py
+    │           vector_database.py
+    │           web_crawler.py
+    │
+    └───utils
+            constants.py
+            formater.py
+            logger.py
+            timer.py
+            utils.py
+```
+
 # Installation
 
 ```bash
