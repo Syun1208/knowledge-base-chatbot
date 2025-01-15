@@ -2,7 +2,7 @@ import requests
 from typing import List
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 
-from src.interface.data_loader import DataLoader
+from src.service.interface.data_loader import DataLoader
 from src.model.knowledge_info import KnowledgeInfo
 from src.utils.utils import convert_html2markdown
 

@@ -9,7 +9,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from src.controller.endpoint_filter import EndpointFilter
-from src.service.faiss_db import FaissDB
+from src.service.implement.faiss_db import FaissDB
 from src.model.knowledge_info import KnowledgeInfo
 from src.utils.utils import get_confident_context
 from src.module.application_container import ApplicationContainer

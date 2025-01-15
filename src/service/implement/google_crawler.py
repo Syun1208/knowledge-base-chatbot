@@ -3,7 +3,7 @@ from typing import List
 import requests
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 
-from src.interface.web_crawler import WebCrawler
+from src.service.interface.web_crawler import WebCrawler
 from src.model.knowledge_info import KnowledgeInfo
 from src.utils.utils import convert_html2markdown
 

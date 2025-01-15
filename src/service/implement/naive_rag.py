@@ -1,9 +1,9 @@
 from langchain_core.prompts.string import StringPromptTemplate
 from typing import List
 
-from src.interface.vector_database import VectorDatabase
-from src.interface.llm import LLM
-from src.interface.rag import RAG
+from src.service.interface.vector_database import VectorDatabase
+from src.service.interface.llm import LLM
+from src.service.interface.rag import RAG
 
 class NaiveRAG(RAG):
     

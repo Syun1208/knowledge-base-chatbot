@@ -4,17 +4,17 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 
 from src.utils.logger import Logger
-from src.interface.llm import LLM
-from src.interface.web_crawler import WebCrawler
-from src.interface.data_loader import DataLoader
-from src.interface.vector_database import VectorDatabase
-from src.service.halong_embedding import HaLongEmbedding
-from src.service.html_loader import HTMLLoader
-from src.service.ollama import Ollama
-from src.service.faiss_db import FaissDB
-from src.interface.chunking import Chunking
-from src.service.markdown_chunking import MarkdownChunking
-from src.service.google_crawler import GoogleCrawler
+from src.service.interface.llm import LLM
+from src.service.interface.web_crawler import WebCrawler
+from src.service.interface.data_loader import DataLoader
+from src.service.interface.vector_database import VectorDatabase
+from src.service.implement.halong_embedding import HaLongEmbedding
+from src.service.implement.html_loader import HTMLLoader
+from src.service.implement.ollama import Ollama
+from src.service.implement.faiss_db import FaissDB
+from src.service.interface.chunking import Chunking
+from src.service.implement.markdown_chunking import MarkdownChunking
+from src.service.implement.google_crawler import GoogleCrawler
 from src.utils.constants import HEADERS_TO_SPLIT_ON
 
 

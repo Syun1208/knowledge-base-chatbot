@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
 import torch
 
-from src.interface.model_embedding import ModelEmbedding
+from src.service.interface.model_embedding import ModelEmbedding
 
 class HaLongEmbedding(ModelEmbedding):
     

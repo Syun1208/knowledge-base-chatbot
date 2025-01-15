@@ -7,14 +7,14 @@ from redis import Redis
 import numpy as np
 from typing import Any, Dict, List
 
-from src.interface.vector_database import VectorDatabase
-from src.interface.model_embedding import ModelEmbedding
-from src.interface.data_loader import DataLoader
+from src.service.interface.vector_database import VectorDatabase
+from src.service.interface.model_embedding import ModelEmbedding
+from src.service.interface.data_loader import DataLoader
 from src.model.knowledge_info import KnowledgeInfo
 from src.model.searching_info import SearchingInfo
-from src.interface.web_crawler import WebCrawler
+from src.service.interface.web_crawler import WebCrawler
 from src.utils.logger import Logger
-from src.interface.chunking import Chunking
+from src.service.interface.chunking import Chunking
 
 class FaissDB(VectorDatabase):
     

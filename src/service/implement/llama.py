@@ -1,7 +1,7 @@
 import transformers
 import torch
 
-from src.interface.llm import LLM
+from src.service.interface.llm import LLM
 
 class Llama(LLM):
     

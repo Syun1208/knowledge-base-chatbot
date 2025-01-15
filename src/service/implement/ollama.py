@@ -2,7 +2,7 @@ import requests
 from typing import List
 import sys
 sys.path.append('D:\Desktop\chatbot4group')
-from src.interface.llm import LLM
+from src.service.interface.llm import LLM
 
 
 class Ollama(LLM):

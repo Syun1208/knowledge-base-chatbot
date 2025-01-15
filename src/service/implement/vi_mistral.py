@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from src.interface.llm import LLM
+from src.service.interface.llm import LLM
 
 
 class ViMistral(LLM):

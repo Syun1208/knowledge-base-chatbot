@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import re
 
 from src.model.knowledge_info import KnowledgeInfo
-from src.interface.chunking import Chunking
+from src.service.interface.chunking import Chunking
 
 
 class MarkdownChunking(Chunking):
