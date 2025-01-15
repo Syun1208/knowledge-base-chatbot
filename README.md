@@ -119,7 +119,7 @@ Now, you can see it running successfully.
 
 ![Alt Text](./image/indexing.png)
 
-***Step 2: provoke endpoint /searching to get the `top_k` relevant documents***
+***Step 2: provoke endpoint `/searching` to get the `top_k` relevant documents***
 
 ```bash
 # Format request to /searching
