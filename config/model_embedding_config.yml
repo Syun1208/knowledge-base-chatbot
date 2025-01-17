@@ -1,0 +1,10 @@
+model_embedding_config:
+  1:
+    id: 1
+    class_name:  HaLongEmbedding
+    class_params:
+      model_id: "hiieu/halong_embedding"
+    model_dim: 768
+    encode_params:
+    get_embedding_params:
+

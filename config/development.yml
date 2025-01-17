@@ -1,0 +1,39 @@
+server:
+  http:
+    host: "0.0.0.0"
+    nthreads: 4
+    port: 8000
+
+default:
+  app_name: "KNOWLEDGE BASE CHATBOT"
+  env: "LOCAL"
+  available_num_processes: 4
+
+huggingface:
+  token: "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"
+  model_embedding: "hiieu/halong_embedding"
+
+vector_db:
+  path_save_db: "./data/vector_db.bin"
+  top_k: 4
+
+knowledge_base:
+  urls:
+    - "https://nexcel.info/employee-handbook-2/"
+    - "https://nexcel.info/nexcel-career-development-handbook/"
+  path_save_documents: "./data/documents.json"
+  chunk_size: 1000
+  chunk_overlap: 20
+
+rag_config:
+  chunking: 
+  model_embedding:
+  llm:
+
+logger:
+  log_dir: "logs/"
+  log_clear_days: 20
+
+timer:
+  show_time_compute: false
+
