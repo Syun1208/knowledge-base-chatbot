@@ -49,7 +49,7 @@ class KCBServiceImpl(KCBService):
         # Save vector database
         faiss.write_index(cpu_index, self.vector_db_config['path_save_db'])
 
-    def searching(self, query: str, model_embedding_approach_id) -> SearchingInformation:
+    def searching_from_vector_embedding(self, query: str, model_embedding_approach_id) -> SearchingInformation:
         cpu_index = self.__load_bin(self.vector_db_config['path_save_db'])
         documents = self.__load_json(self.knowledge_config['path_save_documents'])
         
@@ -98,5 +98,7 @@ class KCBServiceImpl(KCBService):
         print()
         print("Hello Hani!!!!!!!!!")
         print("knowledge_config: ", self.knowledge_config)
-        #self.indexing_knowledge(chunking_approach_id = 1, model_embedding_approach_id = 1)
-        print(self.searching(model_embedding_approach_id = 1, query = "Hello"))
+        # #self.indexing_knowledge(chunking_approach_id = 1, model_embedding_approach_id = 1)
+        # print(self.searching(model_embedding_approach_id = 1, query = "Hello"))
+        data = self.__load_json("data4tuning_shortterm.json")
+        print(data)
