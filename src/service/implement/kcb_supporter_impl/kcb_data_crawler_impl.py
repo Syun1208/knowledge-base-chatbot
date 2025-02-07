@@ -5,7 +5,7 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 from src.service.interface.kcb_supporter.data_crawler import DataCrawler
 from src.model.knowledge_information import KnowledgeInformation
-from src.utils.utils import convert_html2markdown
+from src.utils.utils import convert_html2markdown, split_html_into_section_dict, format_markdown
 
 
 class KCBDataCrawlerImpl(DataCrawler):
@@ -37,7 +37,7 @@ class KCBDataCrawlerImpl(DataCrawler):
         
         return info 
     
-    def crawl_by_url(self, urls: str) -> List[KnowledgeInformation]:
+    def crawl_by_url(self, urls: list[str]) -> List[KnowledgeInformation]:
         info = []
         for url in urls:
             
@@ -45,7 +45,8 @@ class KCBDataCrawlerImpl(DataCrawler):
             
             if response.status_code == 200:
                 html_content = response.text
-                markdown_content = convert_html2markdown(html_content)
+                sections_dict = split_html_into_section_dict(html_content)
+                markdown_content = format_markdown(sections_dict)
                 info.append(
                     KnowledgeInformation(
                         page_content=markdown_content,
@@ -56,5 +57,5 @@ class KCBDataCrawlerImpl(DataCrawler):
             else:
                 raise ValueError(f"Failed to fetch the URL: {response.status_code}")
         
-        return info 
+        return info  
 

@@ -2,15 +2,14 @@ chunking_config:
   1: 
     id: 1
     class_name:  MarkdownChunking
-    function_name: chunking_by_paragraphs
+    function_name: chunking_by_subsection_contents
     function_params:
-      length: 10
-      hani: 11
+
 
   2: 
     id: 2
     class_name:  MarkdownChunking
-    function_name: chunking_by_subsection_contents
+    function_name: chunking_by_paragraphs
     function_params:
 
   3: 
@@ -18,6 +17,9 @@ chunking_config:
     class_name:  MarkdownChunking
     function_name: chunking_by_sentences
     function_params:
+  
+  
+
 
 
 

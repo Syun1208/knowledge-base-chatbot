@@ -1,4 +1,8 @@
 
+# for monitor
+import os
+import pandas as pd
+
 import torch
 import faiss
 import json
@@ -12,6 +16,7 @@ from src.service.interface.kcb_supporter.model_embedding import ModelEmbedding
 from src.service.interface.kcb_service.kcb_service import KCBService
 from src.model.knowledge_information import KnowledgeInformation
 from src.model.searching_information import SearchingInformation
+from src.utils.utils import *
 
 class KCBServiceImpl(KCBService):
     def __init__(self,
@@ -26,11 +31,26 @@ class KCBServiceImpl(KCBService):
         self.knowledge_config = knowledge_config
         self.vector_db_config = vector_db_config
 
-    def indexing_knowledge(self, 
-                           chunking_approach_id: int, 
-                           model_embedding_approach_id: int):
+    def __indexing(self, 
+                urls: list[str],
+                chunking_approach_id: int, 
+                model_embedding_approach_id: int,
+                is_new_knowledge: bool = False):
         # crawl data
-        documents = self.data_crawler.crawl_by_url(self.knowledge_config['urls'])
+        documents = self.data_crawler.crawl_by_url(urls)
+
+        # special handle for new knowledge
+        if is_new_knowledge:
+            old_documents = self.__load_json(self.knowledge_config['path_save_documents'])
+            old_documents = [
+                KnowledgeInformation(
+                    url=old_document['url'],
+                    page_content=old_document['content']
+                ) for old_document in old_documents
+            ]
+            documents = old_documents + documents
+        
+        # indexing and store to db
         # chunking data
         chunked_documents = self.data_chunker.chunk(approach_id = chunking_approach_id, 
                                                     documents = documents, 
@@ -49,7 +69,14 @@ class KCBServiceImpl(KCBService):
         # Save vector database
         faiss.write_index(cpu_index, self.vector_db_config['path_save_db'])
 
-    def searching_from_vector_embedding(self, query: str, model_embedding_approach_id) -> SearchingInformation:
+    def indexing_knowledge(self, chunking_approach_id: int, model_embedding_approach_id: int) -> None:
+        self.__indexing(self.knowledge_config['urls'], chunking_approach_id, model_embedding_approach_id)
+
+    def indexing_web(self, urls: list[str], chunking_approach_id: int, model_embedding_approach_id: int) -> None:
+        self.__indexing(urls, chunking_approach_id, model_embedding_approach_id, True)
+    
+    def searching(self, query: str, model_embedding_approach_id:int ) -> SearchingInformation:
+        query = detect_and_translate(query)
         cpu_index = self.__load_bin(self.vector_db_config['path_save_db'])
         documents = self.__load_json(self.knowledge_config['path_save_documents'])
         
@@ -75,30 +102,47 @@ class KCBServiceImpl(KCBService):
         scores, indices = cpu_index.search(prompt_embedding, k=self.vector_db_config['top_k'])
         urls = [documents[i]['url'] for i in indices.flatten().tolist()]
         contexts = [documents[i]['content'] for i in indices.flatten().tolist()]
+
+        if os.path.exists("./searching_results.csv"):
+            searching_results_df = pd.read_csv("./searching_results.csv")
+            max_id = searching_results_df['QueryID'].max()
+        else:
+            searching_results_df = pd.DataFrame()
+            max_id = 0
+
+        searching_result_df_i = pd.DataFrame()
+        searching_result_df_i['Score'] = scores[0]
+        searching_result_df_i['Context'] = contexts
+        searching_result_df_i['Query'] = query
+        searching_result_df_i['QueryID'] = max_id+1
+
+        searching_results_df = pd.concat([searching_results_df, searching_result_df_i], ignore_index=True)
+        searching_results_df.to_csv("./searching_results.csv", index=False)
+
+        
         
         return SearchingInformation(
             scores=scores.flatten().tolist(),
             urls=urls,
             contexts=contexts,
             indices=indices.flatten().tolist()
-        )
-
+        ), max_id
 
     def __load_json(self, path) -> Dict[str, Any]:
         with open(path, 'r') as json_file:
             documents = json.load(json_file)
         return documents
     
-    
     def __load_bin(self, path) -> faiss.IndexFlatIP:
         cpu_index = faiss.read_index(path) 
         return cpu_index
 
     def run(self):
-        print()
-        print("Hello Hani!!!!!!!!!")
-        print("knowledge_config: ", self.knowledge_config)
-        # #self.indexing_knowledge(chunking_approach_id = 1, model_embedding_approach_id = 1)
-        # print(self.searching(model_embedding_approach_id = 1, query = "Hello"))
-        data = self.__load_json("data4tuning_shortterm.json")
-        print(data)
+        data = pd.read_csv("data4tuning_shortterm_dataframe.csv")
+        start_id = 517
+        for q in tqdm.tqdm(data['Question'].values[start_id:]):
+            try:
+                _, id = self.searching(query= q , model_embedding_approach_id=1)
+            except:
+                pass
+            

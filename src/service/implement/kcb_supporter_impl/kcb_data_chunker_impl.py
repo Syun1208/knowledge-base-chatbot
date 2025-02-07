@@ -23,6 +23,8 @@ class KCBDataChunkerImpl(DataChunker):
         # call function by string
         method = getattr(chunking_tool, self.chunking_config[approach_id]['function_name'])
         function_params = self.chunking_config[approach_id]['function_params']
+        if function_params is None:
+            function_params = {}
 
         # get all chunks
         chunks = method(documents = documents, **function_params)

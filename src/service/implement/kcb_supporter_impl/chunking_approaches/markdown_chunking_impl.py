@@ -26,25 +26,45 @@ class MarkdownChunking():
         ) 
         
         
-    def chunking_by_paragraphs(self, documents: List[KnowledgeInformation],**kwargs) -> List[Dict[str, str]]:
-        print("aaaaaaaaaaaaa: ", kwargs)
+    def chunking_by_paragraphs(self, documents: List[KnowledgeInformation], **kwargs) -> List[Dict[str, str]]:
         chunks = []
-        print("kwargs.length: ", kwargs['length'])
-        print("kwargs.hani: ", kwargs['hani'])
-        for info in documents:
         
+        for info in documents:
             md_header_splits = self.markdown_splitter.split_text(info.page_content)
-
+            
             for md_header_split in md_header_splits:
+                headers = list(md_header_split.metadata.values())
+                if 'Untitled Section' in headers:
+                    continue
+                if not headers:  # Skip if no headers
+                    continue
+                
+                # Convert Markdown to HTML and extract plain text
                 html = markdown(md_header_split.page_content)
-                page_content = ''.join(BeautifulSoup(html).findAll(text=True))
+                page_content = ''.join(BeautifulSoup(html, "html.parser").findAll(text=True))
+                
+                # Clean up text
                 page_content = re.sub(r'\| --- \| --- \| --- \|', '', page_content)
                 page_content = re.sub(r'\n+', '\n', page_content).strip()
-                chunks.append({
-                    'url': info.url,
-                    'content': page_content
-                })
-               
+
+                # **Drop lines with only "===" or similar patterns**
+                page_content = "\n".join(
+                    line for line in page_content.split("\n") if not re.match(r'^[=]+$', line)
+                )
+                
+                # **Chunk by paragraphs** (splitting by empty lines)
+                paragraphs = [p.strip() for p in page_content.split("\n") if p.strip()]
+                
+                # **Concatenate headers to each paragraph**
+                header_text = " > ".join(headers)
+
+                for paragraph in paragraphs:
+                    chunks.append({
+                        'url': info.url,
+                        'headers': headers,
+                        'content': f"{header_text}\n{paragraph}"  # Each paragraph as a separate chunk
+                    })
+        
         return chunks
     
     def chunking_by_subsection_contents(self, documents: List[KnowledgeInformation],**kwargs) -> List[Dict[str, str]]:
@@ -52,17 +72,18 @@ class MarkdownChunking():
         for info in documents:
         
             md_header_splits = self.markdown_splitter.split_text(info.page_content)
-
             for md_header_split in md_header_splits:
+                headers = list(md_header_split.metadata.values())
                 html = markdown(md_header_split.page_content)
                 page_content = ''.join(BeautifulSoup(html).findAll(text=True))
                 page_content = re.sub(r'\| --- \| --- \| --- \|', '', page_content)
                 page_content = re.sub(r'\n+', '\n', page_content).strip()
                 chunks.append({
                     'url': info.url,
+                    'headers': headers,
                     'content': page_content
                 })
-               
+                
         return chunks
     
     def chunking_by_sentences(self, documents: List[KnowledgeInformation],**kwargs) -> List[Dict[str, str]]:
