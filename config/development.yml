@@ -15,7 +15,7 @@ huggingface:
 
 vector_db:
   path_save_db: "./data/vector_db.bin"
-  top_k: 4
+  top_k: 10
 
 knowledge_base:
   urls:
@@ -36,4 +36,14 @@ logger:
 
 timer:
   show_time_compute: false
+
+db:
+  aiml_mysql:
+    server : 'localhost'
+    database_name : 'SPU_AIML'
+    username : 'hani.vn'
+    password : 'hanivn@aiml2209#'
+    host : '10.18.200.72'
+    port : '3306'
+    dbms_name : 'MySQL'
 

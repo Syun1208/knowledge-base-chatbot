@@ -1,0 +1,10 @@
+USE SPU_AIML;
+
+DROP TABLE IF EXISTS KCB_UserFeedback;
+CREATE TABLE `KCB_UserFeedback` (
+  `RequestID`      BIGINT AUTO_INCREMENT PRIMARY KEY,
+  `Question`       TEXT NULL,
+  `Answer`         TEXT NULL,
+  `Feedback`       TEXT NULL,
+  `CreatedDate`    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;

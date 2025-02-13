@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 
 from src.controller.kcb_endpoint_filter import EndpointFilter
 from src.service.interface.kcb_service.kcb_service import KCBService
+from src.service.interface.kcb_service.kcb_db_service import DataService
 from src.utils.utils import get_confident_context
 from src.module.application_container import ApplicationContainer
 
@@ -112,13 +113,13 @@ async def searching(
 ) -> JSONResponse:
     
     try:
-        searching_results = kcb_service.run()
+        response = kcb_service.run()
         #print(searching_results)
 
         return JSONResponse(
             content=jsonable_encoder({
-                'urls': searching_results.urls,
-                'contexts': searching_results.contexts
+                'urls': response.urls,
+                'contexts': response.contexts
             }),
             status_code=200
         )
@@ -129,4 +130,44 @@ async def searching(
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
     
-  
+@kcb_router.get('/insert_feedback')
+@inject
+async def searching(
+    request: Request,
+    kcb_data_service: DataService = Depends(Provide[ApplicationContainer.kcb_data_service])
+) -> JSONResponse:
+    
+    try:
+        params = await request.json()
+        kcb_data_service.insert_feedback(question = params['question'],
+                                         answer = params['answer'],
+                                         feedback = params['feedback'])
+
+        return JSONResponse(
+            content= "Insert feedback successfully",
+            status_code=200
+        )
+        
+    except Exception as e:
+        # If any exception occurs, raise an HTTP 500 Internal Server Error
+        print(e)
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@kcb_router.post('/get_feedback')
+@inject
+async def searching(
+    request: Request,
+    kcb_data_service: DataService = Depends(Provide[ApplicationContainer.kcb_data_service])
+) -> JSONResponse:
+    
+    try:
+        response = kcb_data_service.get_feedback()
+        response_json = response.to_json(orient="records")
+        return JSONResponse(content=response_json, status_code=200)
+        
+    except Exception as e:
+        # If any exception occurs, raise an HTTP 500 Internal Server Error
+        print(e)
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))

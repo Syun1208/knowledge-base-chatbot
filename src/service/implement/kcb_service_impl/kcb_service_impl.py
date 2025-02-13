@@ -37,7 +37,15 @@ class KCBServiceImpl(KCBService):
                 model_embedding_approach_id: int,
                 is_new_knowledge: bool = False):
         # crawl data
-        documents = self.data_crawler.crawl_by_url(urls)
+        # documents = self.data_crawler.crawl_by_url(urls)
+        documents = []
+        paths = ['./data/employee-handbook-2.md', './data/nexcel-career-development-handbook.md']
+        urls = ['https://nexcel.info/employee-handbook-2/', 'https://nexcel.info/nexcel-career-development-handbook/']
+        for p, u in zip(paths, urls):
+            with open(p, "r", encoding="utf-8") as f:
+                page_content = f.read()
+
+            documents.append(KnowledgeInformation(page_content=page_content, url=u))
 
         # special handle for new knowledge
         if is_new_knowledge:
@@ -77,6 +85,7 @@ class KCBServiceImpl(KCBService):
     
     def searching(self, query: str, model_embedding_approach_id:int ) -> SearchingInformation:
         query = detect_and_translate(query)
+        print("After translate: ", query)
         cpu_index = self.__load_bin(self.vector_db_config['path_save_db'])
         documents = self.__load_json(self.knowledge_config['path_save_documents'])
         
@@ -126,7 +135,7 @@ class KCBServiceImpl(KCBService):
             urls=urls,
             contexts=contexts,
             indices=indices.flatten().tolist()
-        ), max_id
+        )
 
     def __load_json(self, path) -> Dict[str, Any]:
         with open(path, 'r') as json_file:
@@ -138,11 +147,12 @@ class KCBServiceImpl(KCBService):
         return cpu_index
 
     def run(self):
-        data = pd.read_csv("data4tuning_shortterm_dataframe.csv")
-        start_id = 517
-        for q in tqdm.tqdm(data['Question'].values[start_id:]):
-            try:
-                _, id = self.searching(query= q , model_embedding_approach_id=1)
-            except:
-                pass
+        pass
+        # data = pd.read_csv("data4tuning_shortterm_dataframe.csv")
+        # start_id = 517
+        # for q in tqdm.tqdm(data['Question'].values[start_id:]):
+        #     try:
+        #         _, id = self.searching(query= q , model_embedding_approach_id=1)
+        #     except:
+        #         pass
             
