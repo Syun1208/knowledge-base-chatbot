@@ -1,0 +1,11 @@
+**/*html
+**/*__pycache__/
+data/documents.json
+**/*logs/
+**/*.bin
+**/*logs/
+.venv
+**/*notebook/*.md
+**/*notebook/*.txt
+**/*.json
+clean.py

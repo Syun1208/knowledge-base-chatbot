@@ -108,7 +108,7 @@ async def searching(
 
 @kcb_router.get('/experiment')
 @inject
-async def searching(
+async def experiment(
     kcb_service: KCBService = Depends(Provide[ApplicationContainer.kcb_service])
 ) -> JSONResponse:
     
@@ -130,21 +130,30 @@ async def searching(
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
     
-@kcb_router.get('/insert_feedback')
+@kcb_router.post('/insert_feedback')
 @inject
-async def searching(
+async def insert_feedback(
     request: Request,
     kcb_data_service: DataService = Depends(Provide[ApplicationContainer.kcb_data_service])
 ) -> JSONResponse:
     
     try:
+        feedback = ""
         params = await request.json()
-        kcb_data_service.insert_feedback(question = params['question'],
-                                         answer = params['answer'],
-                                         feedback = params['feedback'])
+        
+        if len(params['feedback']) > 1:
+            feedback = ', '.join(params['feedback'])
+            
+        print(params)
+        
+        kcb_data_service.insert_feedback(
+            question=params['question'],
+            answer=params['answer'],
+            feedback=feedback
+        )
 
         return JSONResponse(
-            content= "Insert feedback successfully",
+            content="Insert feedback successfully",
             status_code=200
         )
         
@@ -154,10 +163,9 @@ async def searching(
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
     
-@kcb_router.post('/get_feedback')
+@kcb_router.get('/get_feedback')
 @inject
-async def searching(
-    request: Request,
+async def get_feedback(
     kcb_data_service: DataService = Depends(Provide[ApplicationContainer.kcb_data_service])
 ) -> JSONResponse:
     

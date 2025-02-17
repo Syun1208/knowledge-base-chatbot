@@ -1,6 +1,7 @@
 import json
 class SPU_AIML_KCB_UserFeedback_Insert_Feedback(object):
     def __init__(self,*args):
+        print(args)
         self.ip_Feedback: json = args[0]
         self.op_ErrorMessage = None
         

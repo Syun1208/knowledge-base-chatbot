@@ -23,11 +23,14 @@ class KCBDataServiceImpl(DataService):
             table = [tuple(record) for record in dba_result[0]]
             feedback_df = pd.DataFrame(table, columns=db.KCB_USER_FEEDBACK_COLS)
             return feedback_df
+        
     def insert_feedback(self, question: str, answer:str, feedback:str) -> None:
         try:
-            ip_SMAPerformanceInfo = json.dumps({db.QUESTION: question,
-                                     db.ANSWER : answer,
-                                     db.FEEDBACK: feedback})
-            self.wasa_aiml_executor.insert_feedback(ip_SMAPerformanceInfo)
+            ip_Feedback = json.dumps([{
+                db.KCB_USER_FEEDBACK[db.QUESTION]: question,
+                db.KCB_USER_FEEDBACK[db.ANSWER]: answer,
+                db.KCB_USER_FEEDBACK[db.FEEDBACK]: feedback
+            }])
+            self.wasa_aiml_executor.insert_feedback(ip_Feedback)
         except Exception as e:
             raise ValueError(e)

@@ -84,8 +84,8 @@ class KCBServiceImpl(KCBService):
         self.__indexing(urls, chunking_approach_id, model_embedding_approach_id, True)
     
     def searching(self, query: str, model_embedding_approach_id:int ) -> SearchingInformation:
-        query = detect_and_translate(query)
-        print("After translate: ", query)
+        # query = detect_and_translate(query)
+        # print("After translate: ", query)
         cpu_index = self.__load_bin(self.vector_db_config['path_save_db'])
         documents = self.__load_json(self.knowledge_config['path_save_documents'])
         
@@ -112,21 +112,21 @@ class KCBServiceImpl(KCBService):
         urls = [documents[i]['url'] for i in indices.flatten().tolist()]
         contexts = [documents[i]['content'] for i in indices.flatten().tolist()]
 
-        if os.path.exists("./searching_results.csv"):
-            searching_results_df = pd.read_csv("./searching_results.csv")
-            max_id = searching_results_df['QueryID'].max()
-        else:
-            searching_results_df = pd.DataFrame()
-            max_id = 0
+        # if os.path.exists("./searching_results.csv"):
+        #     searching_results_df = pd.read_csv("./searching_results.csv")
+        #     max_id = searching_results_df['QueryID'].max()
+        # else:
+        #     searching_results_df = pd.DataFrame()
+        #     max_id = 0
 
-        searching_result_df_i = pd.DataFrame()
-        searching_result_df_i['Score'] = scores[0]
-        searching_result_df_i['Context'] = contexts
-        searching_result_df_i['Query'] = query
-        searching_result_df_i['QueryID'] = max_id+1
+        # searching_result_df_i = pd.DataFrame()
+        # searching_result_df_i['Score'] = scores[0]
+        # searching_result_df_i['Context'] = contexts
+        # searching_result_df_i['Query'] = query
+        # searching_result_df_i['QueryID'] = max_id+1
 
-        searching_results_df = pd.concat([searching_results_df, searching_result_df_i], ignore_index=True)
-        searching_results_df.to_csv("./searching_results.csv", index=False)
+        # searching_results_df = pd.concat([searching_results_df, searching_result_df_i], ignore_index=True)
+        # searching_results_df.to_csv("./searching_results.csv", index=False)
 
         
         
