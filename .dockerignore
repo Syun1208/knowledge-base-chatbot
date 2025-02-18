@@ -1,7 +1,7 @@
 **/*.csv
 **/*.npy
 **/*results**
-**/*.json
+# **/*.json
 .vscode
 **/*.png
 **/*.pytest/

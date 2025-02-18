@@ -34,3 +34,4 @@ langchain-ollama
 pyodbc==5.1.0
 mysql-connector-python==8.4.0
 deep-translator
+pandas
