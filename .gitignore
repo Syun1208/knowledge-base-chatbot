@@ -4,4 +4,5 @@
 .venv
 **/*notebook/*.md
 **/*notebook/*.txt
+**/*notebook/career_images/*
 clean.py

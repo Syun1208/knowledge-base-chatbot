@@ -2,7 +2,7 @@ server:
   http:
     host: "0.0.0.0"
     nthreads: 4
-    port: 8000
+    port: 5000
 
 default:
   app_name: "KNOWLEDGE BASE CHATBOT"

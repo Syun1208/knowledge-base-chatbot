@@ -1,12 +1,12 @@
 transformers
-crawl4ai
+# crawl4ai
 accelerate>=0.26.0
 faiss-cpu
 colorlog
 redis
-torch 
+# torch 
 nltk
-nest-asyncio # just for async in notebook
+# nest-asyncio # just for async in notebook
 langchain
 beautifulsoup4 
 requests
@@ -21,7 +21,7 @@ requests
 beautifulsoup4 
 markdownify
 Markdown
-torch
+# torch
 ollama
 sentence-transformers
 blobfile
