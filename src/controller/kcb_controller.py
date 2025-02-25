@@ -16,6 +16,8 @@ from src.utils.utils import get_confident_context
 from src.module.application_container import ApplicationContainer
 
 
+uvicorn_logger = logging.getLogger("uvicorn.access")
+uvicorn_logger.addFilter(EndpointFilter(path="/"))
 
 
 kcb_router = APIRouter()
