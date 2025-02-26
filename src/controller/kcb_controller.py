@@ -92,7 +92,7 @@ async def searching(
     try:
         params = await request.json()
         searching_results = kcb_service.searching(params['query'], params['model_embedding_approach_id'])
-        #print(searching_results)
+        print(searching_results)
 
         return JSONResponse(
             content=jsonable_encoder({

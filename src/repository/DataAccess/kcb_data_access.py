@@ -12,9 +12,12 @@ class WasaAimlKCBSPExecutor(SPExecutor):
         
         return sp_result
     
-    def insert_feedback(self, ip_Feedback):
+    def insert_feedback(self, ip_ServiceID, ip_Feedback):
         self.manage_sp_operation(
             "SPU_AIML_KCB_UserFeedback_Insert_Feedback", 
-            lambda: SPU_AIML_KCB_UserFeedback_Insert_Feedback(ip_Feedback)
+            lambda: SPU_AIML_KCB_UserFeedback_Insert_Feedback(
+                ip_ServiceID, 
+                ip_Feedback
+            )
         )
 

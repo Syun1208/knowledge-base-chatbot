@@ -5,6 +5,7 @@ server:
     port: 5000
 
 default:
+  service_id: 100
   app_name: "KNOWLEDGE BASE CHATBOT"
   env: "LOCAL"
   available_num_processes: 4

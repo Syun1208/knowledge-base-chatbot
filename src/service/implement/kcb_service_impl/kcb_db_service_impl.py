@@ -12,7 +12,11 @@ from src.utils.constants import DBModel as db
 class KCBDataServiceImpl(DataService):
     def __init__(
         self,
-        wasa_aiml_connector: BaseRepository):
+        service_id: int,
+        wasa_aiml_connector: BaseRepository
+    ) -> None:
+        
+        self.service_id = service_id
         self.wasa_aiml_executor = WasaAimlKCBSPExecutor(wasa_aiml_connector)
 
     def get_feedback(self) -> pd.DataFrame:
@@ -31,6 +35,9 @@ class KCBDataServiceImpl(DataService):
                 db.KCB_USER_FEEDBACK[db.ANSWER]: answer,
                 db.KCB_USER_FEEDBACK[db.FEEDBACK]: feedback
             }])
-            self.wasa_aiml_executor.insert_feedback(ip_Feedback)
+            self.wasa_aiml_executor.insert_feedback(
+                self.service_id,
+                ip_Feedback
+            )
         except Exception as e:
             raise ValueError(e)

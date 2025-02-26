@@ -88,6 +88,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
     kcb_data_service.override(
         providers.Singleton(
             KCBDataServiceImpl,
+            service_id=config.default.service_id,
             wasa_aiml_connector=wasa_aiml_connector
         )
     )
